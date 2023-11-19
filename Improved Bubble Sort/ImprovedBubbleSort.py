@@ -1,96 +1,54 @@
-import random
 import time
+import random
 
 def improved_bubble_sort(arr):
+    trocas = 0
+    comparacoes = 0
     n = len(arr)
-    # Defina um flag para verificar se houve trocas durante a iteração
-    swapped = True
-    # Inicialize o número de iterações
-    iteration = 0
 
-    while swapped:
-        swapped = False
-        iteration += 1
-        # Itera sobre todos os elementos do vetor
-        for i in range(n - iteration):
-            # Compara elementos adjacentes
-            if arr[i] > arr[i + 1]:
-                # Troca os elementos se estiverem na ordem errada
-                arr[i], arr[i + 1] = arr[i + 1], arr[i]
-                # Seta a flag para True pois houve uma troca
-                swapped = True
+    for i in range(n):
+        trocas_passo = 0
+        ordenado = True
+        for j in range(0, n-i-1):
+            comparacoes += 1
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+                trocas += 1
+                trocas_passo += 1
+                ordenado = False
 
-# Criando um vetor com 1000 elementos aleatórios (Caso médio: O(n))
-v_caso_medio = [random.randint(1, 1000) for _ in range(1000)]
-# Criando um vetor ordenado de 1000 elementos(Melhor Caso: O(n))
-v_melhorCaso = list(range(1, 1001))
-# Criando um vetor ordenado de 1000 elementos em ordem decrescente(Pior Caso: O(n²)):
-v_piorCaso = list(range(1000, 0, -1))
+        # Se nenhum elemento foi trocado, o vetor está ordenado
+        if ordenado:
+            break
 
-# Melhor caso
-start_time = time.time()
-improved_bubble_sort(v_melhorCaso)
-end_time = time.time()
-print("Tempo de execução para o melhor caso com 1000 elementos: ", end_time - start_time)
+    return trocas, comparacoes
 
-# Caso médio
-start_time = time.time()
-improved_bubble_sort(v_caso_medio)
-end_time = time.time()
-print("Tempo de execução para o caso médio com 1000 elementos: ", end_time - start_time)
+def run_improved_bubble_sort_case(case, size):
+    if case == "melhor":
+        arr = list(range(1, size + 1))  # Melhor Caso: Valores em ordem crescente
+    elif case == "medio":
+        arr = random.sample(range(1, size + 1), size)  # Caso Médio: Valores desordenados com números aleatórios
+    elif case == "pior":
+        arr = list(range(size, 0, -1))  # Pior Caso: Valores em ordem decrescente
 
-# Pior caso
-start_time = time.time()
-improved_bubble_sort(v_piorCaso)
-end_time = time.time()
-print("Tempo de execução para o pior caso com 1000 elementos: ", end_time - start_time)
+    start_time = time.time()
+    trocas, comparacoes = improved_bubble_sort(arr)
+    end_time = time.time()
+    execution_time = end_time - start_time
 
-# Criando um vetor com 10000 elementos aleatórios (Caso médio: O(n))
-v_caso_medio1 = [random.randint(1, 10000) for _ in range(10000)]
-# Criando um vetor ordenado de 10000 elementos(Melhor Caso: O(n))
-v_melhorCaso1 = list(range(1, 10001))
-# Criando um vetor ordenado de 10000 elementos em ordem decrescente(Pior Caso: O(n²)):
-v_piorCaso1 = list(range(10000, 0, -1))
+    return execution_time, trocas, comparacoes
 
-# Melhor caso
-start_time = time.time()
-improved_bubble_sort(v_melhorCaso1)
-end_time = time.time()
-print("Tempo de execução para o melhor caso com 10000 elementos: ", end_time - start_time)
+# Teste para vetores de tamanho 1000, 10000, 100000
+sizes = [1000, 10000, 100000]
 
-# Caso médio
-start_time = time.time()
-improved_bubble_sort(v_caso_medio1)
-end_time = time.time()
-print("Tempo de execução para o caso médio com 10000 elementos: ", end_time - start_time)
+for size in sizes:
+    print(f"Tamanho do vetor: {size}")
+    
+    melhor_caso = run_improved_bubble_sort_case("melhor", size)
+    medio_caso = run_improved_bubble_sort_case("medio", size)
+    pior_caso = run_improved_bubble_sort_case("pior", size)
 
-# Pior caso
-start_time = time.time()
-improved_bubble_sort(v_piorCaso1)
-end_time = time.time()
-print("Tempo de execução para o pior caso com 10000 elementos: ", end_time - start_time)
-
-# Criando um vetor com 100000 elementos aleatórios (Caso médio: O(n))
-v_caso_medio2 = [random.randint(1, 100000) for _ in range(100000)]
-# Criando um vetor ordenado de 100000 elementos(Melhor Caso: O(n))
-v_melhorCaso2 = list(range(1, 100001))
-# Criando um vetor ordenado de 100000 elementos em ordem decrescente(Pior Caso: O(n²)):
-v_piorCaso2 = list(range(100000, 0, -1))
-
-# Melhor caso
-start_time = time.time()
-improved_bubble_sort(v_melhorCaso2)
-end_time = time.time()
-print("Tempo de execução para o melhor caso com 100000 elementos: ", end_time - start_time)
-
-# Caso médio
-start_time = time.time()
-improved_bubble_sort(v_caso_medio2)
-end_time = time.time()
-print("Tempo de execução para o caso médio com 100000 elementos: ", end_time - start_time)
-
-# Pior caso
-start_time = time.time()
-improved_bubble_sort(v_piorCaso2)
-end_time = time.time()
-print("Tempo de execução para o pior caso com 100000 elementos: ", end_time - start_time)
+    print(f"Melhor Caso: Tempo de Execução = {melhor_caso[0]:.6f}s, Quantidade de Trocas = {melhor_caso[1]}, Quantidade de Comparações = {melhor_caso[2]}")
+    print(f"Caso Médio: Tempo de Execução = {medio_caso[0]:.6f}s, Quantidade de Trocas = {medio_caso[1]}, Quantidade de Comparações = {medio_caso[2]}")
+    print(f"Pior Caso: Tempo de Execução = {pior_caso[0]:.6f}s, Quantidade de Trocas = {pior_caso[1]}, Quantidade de Comparações = {pior_caso[2]}")
+    print("-" * 50)
