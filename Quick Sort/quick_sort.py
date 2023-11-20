@@ -1,67 +1,88 @@
-import time
 import random
+import time
 
-def quick_sort(arr):
-    trocas = 0
-    comparacoes = 0
+def swap(arr, a, b, trocas):
+    arr[a], arr[b] = arr[b], arr[a]
+    trocas[0] += 1
 
-    def partition(arr, low, high):
-        nonlocal trocas, comparacoes
-        pivot = arr[high]
-        i = low - 1
+def partition(arr, low, high, trocas, comparacoes):
+    pivot = arr[high]
+    i = low - 1
 
-        for j in range(low, high):
-            comparacoes += 1
-            if arr[j] <= pivot:
-                i += 1
-                arr[i], arr[j] = arr[j], arr[i]
-                trocas += 1
+    for j in range(low, high):
+        comparacoes[0] += 1
+        if arr[j] < pivot:
+            i += 1
+            swap(arr, i, j, trocas)
 
-        arr[i + 1], arr[high] = arr[high], arr[i + 1]
-        trocas += 1
+    swap(arr, i + 1, high, trocas)
+    return i + 1
 
-        return i + 1
+def quickSort(arr, trocas, comparacoes):
+    stack = [(0, len(arr) - 1)]
 
-    def quick_sort_recursive(arr, low, high):
-        nonlocal trocas, comparacoes
+    while stack:
+        low, high = stack.pop()
+
         if low < high:
-            partition_index = partition(arr, low, high)
-            quick_sort_recursive(arr, low, partition_index - 1)
-            quick_sort_recursive(arr, partition_index + 1, high)
+            pi = partition(arr, low, high, trocas, comparacoes)
 
-    start_time = time.time()
-    quick_sort_recursive(arr, 0, len(arr) - 1)
-    end_time = time.time()
+            if pi - low < high - pi:
+                stack.append((low, pi - 1))
+                stack.append((pi + 1, high))
+            else:
+                stack.append((pi + 1, high))
+                stack.append((low, pi - 1))
 
-    execution_time = end_time - start_time
-    return execution_time, trocas, comparacoes
+def performQuickSort(arr):
+    trocas = [0]
+    comparacoes = [0]
+    low = 0
+    high = len(arr) - 1
+    quickSort(arr, trocas, comparacoes)
+    return trocas[0], comparacoes[0]
 
-def run_quick_sort_case(case, size):
-    if case == "melhor":
-        arr = list(range(1, size + 1))  # Melhor Caso: Valores em ordem crescente
-    elif case == "medio":
-        arr = random.sample(range(1, size + 1), size)  # Caso Médio: Valores desordenados com números aleatórios
-    elif case == "pior":
-        arr = list(range(size, 0, -1))  # Pior Caso: Valores em ordem decrescente
+# Tamanhos dos vetores
+tamanhos = [1000, 10000, 100000]
 
-    start_time = time.time()
-    trocas, comparacoes = quick_sort(arr.copy())
-    end_time = time.time()
+for tamanho in tamanhos:
+    vetorMelhorCaso = list(range(tamanho))
+    vetorCasoMedio = [random.randint(0, tamanho) for _ in range(tamanho)]
+    vetorPiorCaso = list(range(tamanho, 0, -1))
 
-    execution_time = end_time - start_time
-    return execution_time, trocas, comparacoes
+    # Medir o tempo de execução, quantidade de trocas e comparações para o Melhor Caso
+    startMelhorCaso = time.time()
+    trocasMelhorCaso, comparacoesMelhorCaso = performQuickSort(vetorMelhorCaso.copy())
+    endMelhorCaso = time.time()
+    tempoMelhorCaso = endMelhorCaso - startMelhorCaso
 
-# Teste para vetores de tamanho 1000, 10000, 100000
-sizes = [1000, 10000, 100000]
+    # Medir o tempo de execução, quantidade de trocas e comparações para o Caso Médio
+    startCasoMedio = time.time()
+    trocasCasoMedio, comparacoesCasoMedio = performQuickSort(vetorCasoMedio.copy())
+    endCasoMedio = time.time()
+    tempoCasoMedio = endCasoMedio - startCasoMedio
 
-for size in sizes:
-    print(f"Tamanho do vetor: {size}")
+    # Medir o tempo de execução, quantidade de trocas e comparações para o Pior Caso
+    startPiorCaso = time.time()
+    trocasPiorCaso, comparacoesPiorCaso = performQuickSort(vetorPiorCaso.copy())
+    endPiorCaso = time.time()
+    tempoPiorCaso = endPiorCaso - startPiorCaso
 
-    melhor_caso = run_quick_sort_case("melhor", size)
-    medio_caso = run_quick_sort_case("medio", size)
-    pior_caso = run_quick_sort_case("pior", size)
+    # Exibir resultados
+    print(f"Tamanho do vetor: {tamanho}")
+    print("Melhor Caso:")
+    print(f"Tempo de Execucao: {tempoMelhorCaso:.6f} segundos")
+    print(f"Quantidade de Trocas: {trocasMelhorCaso}")
+    print(f"Quantidade de Comparacoes: {comparacoesMelhorCaso}")
 
-    print(f"Melhor Caso: Tempo de Execução = {melhor_caso[0]:.6f}s, Quantidade de Trocas = {melhor_caso[1]}, Quantidade de Comparações = {melhor_caso[2]}")
-    print(f"Caso Médio: Tempo de Execução = {medio_caso[0]:.6f}s, Quantidade de Trocas = {medio_caso[1]}, Quantidade de Comparações = {medio_caso[2]}")
-    print(f"Pior Caso: Tempo de Execução = {pior_caso[0]:.6f}s, Quantidade de Trocas = {pior_caso[1]}, Quantidade de Comparações = {pior_caso[2]}")
-    print("-" * 50)
+    print("Caso Medio:")
+    print(f"Tempo de Execucao: {tempoCasoMedio:.6f} segundos")
+    print(f"Quantidade de Trocas: {trocasCasoMedio}")
+    print(f"Quantidade de Comparacoes: {comparacoesCasoMedio}")
+
+    print("Pior Caso:")
+    print(f"Tempo de Execucao: {tempoPiorCaso:.6f} segundos")
+    print(f"Quantidade de Trocas: {trocasPiorCaso}")
+    print(f"Quantidade de Comparacoes: {comparacoesPiorCaso}")
+
+    print("----------------------------------------")

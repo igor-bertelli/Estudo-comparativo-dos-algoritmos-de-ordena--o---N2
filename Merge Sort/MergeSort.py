@@ -34,22 +34,22 @@ def merge_sort(arr, compare = lambda x, y: x < y):
 sizes = [1000, 10000, 100000]
 for size in sizes:
     # Melhor caso
-    arr = list(range(size))
+    arr = list(range(1, size +1))
     start_time = time.time()
     sorted_arr, comp, trocas = merge_sort(arr)
     end_time = time.time()
-    print(f"Melhor caso com {size} elementos - Tempo: {end_time - start_time}, Comparações: {comp}, Trocas: {trocas}")
+    print(f"Melhor caso com {size} elementos - Tempo: {end_time - start_time:.6f}, Comparações: {comp}, Trocas: {trocas}")
 
     # Caso médio
-    arr = random.sample(range(size), size)
+    arr = random.sample(range(1, size + 1), size)
     start_time = time.time()
     sorted_arr, comp, trocas = merge_sort(arr)
     end_time = time.time()
-    print(f"Caso médio com {size} elementos - Tempo: {end_time - start_time}, Comparações: {comp}, Trocas: {trocas}")
+    print(f"Caso médio com {size} elementos - Tempo: {end_time - start_time:.6f}, Comparações: {comp}, Trocas: {trocas}")
 
     # Pior caso
     arr = list(range(size, 0, -1))
     start_time = time.time()
     sorted_arr, comp, trocas = merge_sort(arr, compare = lambda x, y: x > y)
     end_time = time.time()
-    print(f"Pior caso com {size} elementos - Tempo: {end_time - start_time}, Comparações: {comp}, Trocas: {trocas}")
+    print(f"Pior caso com {size} elementos - Tempo: {end_time - start_time:.6f}, Comparações: {comp}, Trocas: {trocas}")
